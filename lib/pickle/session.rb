@@ -56,13 +56,15 @@ module Pickle
 
     def find_model(a_model_name, fields = nil)
       factory, name = *parse_model(a_model_name)
+      
+      return models_by_name(factory)[name] unless name.blank?
 
       raise ArgumentError, "Can't find a model with an ordinal (e.g. 1st user)" if name.is_a?(Integer)
 
       model_class = pickle_config.factories[factory].klass
       fields      = fields.is_a?(Hash) ? parse_hash(fields) : parse_fields(fields)
       conditions  = convert_models_to_attributes(model_class, fields)
-      record      = Pickle::Adapter.find_first_model(model_class, conditions)
+      record	  = Pickle::Adapter.find_first_model(model_class, conditions)
 
       store_model(factory, name, record) if record
 
